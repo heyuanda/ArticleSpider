@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+    <link rel="stylesheet" href="./layui-v2.5.4/layui/css/layui.css">
+    <script src="./jquery-3.2.1/jquery-3.2.1.min.js"></script>
+    <script src="./layui-v2.5.4/layui/layui.js"></script>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">首页</div>
+    </div>
+
+
+    <div class="layui-body">
+        <br/>
+        <div>
+            <div class="layui-inline">
+                <label class="layui-form-label">栏目:</label>
+                <div class="layui-input-inline">
+                    <input id="search_type" type="tel" name="phone" lay-verify="required|phone" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">城市:</label>
+                <div class="layui-input-inline">
+                    <input id="search_city" type="tel" name="phone" lay-verify="required|phone" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div><br/>
+            <div class="layui-inline">
+                <label class="layui-form-label">来源:</label>
+                <div class="layui-input-inline">
+                    <input id="search_source" type="tel" name="phone" lay-verify="required|phone" autocomplete="off"
+                           class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label" id="test25-1">日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="test25">
+                </div>
+            </div>
+
+            <button onclick="showArticle(1)" type="button" class="layui-btn">搜索</button>
+        </div>
+        <div class="layui-form">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                    <col width="150">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>标题</th>
+                    <th>栏目</th>
+                    <th>来源</th>
+                    <th>时间</th>
+                    <th>城市</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="article_list">
+                </tbody>
+            </table>
+        </div>
+        <div id="page"></div>
+    </div>
+
+    <div class="layui-footer">
+    </div>
+</div>
+<script>
+    $(function () {
+        showArticle(1);
+
+    })
+
+    function showArticle(pageNo) {
+        $.ajax({
+            url: "/show_article/" + pageNo,
+            data: {
+                "city": $("#search_city").val(),
+                "source": $("#search_source").val(),
+                "type": $("#search_type").val(),
+                "date": $("#test25").val()
+            },
+            type: "post",
+            dataType: "json",
+            success: function (json) {
+                if (json.state == 0) {
+                    $("#article_list").text("无数据");
+                } else {
+                    var list = json.data.data;
+                    var html = "";
+                    for (i = 0; i < list.length; i++) {
+                        html += '<tr>' +
+                            '<td>' + list[i].title + '</td>' +
+                            '<td>' + list[i].type + '</td>' +
+                            '<td>' + list[i].source + '</td>' +
+                            '<td>' + list[i].date + '</td>' +
+                            '<td>' + list[i].city + '</td>' +
+                            '<td><a href="/detail?id=' + list[i].id + '">详情</a></td>' +
+                            '</tr>';
+                    }
+                    $("#article_list").html(html);
+                    layui.use(['laypage', 'layer'], function () {
+                        console.log(json.data.totalNum);
+                        var laypage = layui.laypage
+                            , layer = layui.layer;
+                        laypage.render({
+                            elem: 'page'
+                            , count: json.data.totalNum
+                            , limit: json.data.pageSize
+                            , curr: pageNo
+                            , first: '首页'
+                            , last: '尾页'
+                            , layout: ['count', 'prev', 'page', 'next', 'skip', 'first', 'last']
+                            , jump: function (obj, first) {
+                                if (!first) {
+                                    var curr = obj.curr;
+                                    showArticle(curr);
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+        })
+    }
+
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+        laydate.render({
+            elem: '#test25'
+            ,eventElem: '#test25-1'
+            ,type: 'date'
+            ,trigger: 'click'
+            ,format: 'yyyy年MM月dd日'
+        });
+    })
+</script>
+</body>
+</html>

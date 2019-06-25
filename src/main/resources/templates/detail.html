@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>详情</title>
+    <link rel="stylesheet" href="./layui-v2.5.4/layui/css/layui.css">
+    <script src="./jquery-3.2.1/jquery-3.2.1.min.js"></script>
+    <script src="./layui-v2.5.4/layui/layui.js"></script>
+    <style type="text/css">
+        p{ text-indent:2em;}
+    </style>
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo" onclick="location.href='/index'">返回首页</div>
+    </div>
+
+    <div class="layui-body" id="detail" style="padding-right: 80px">
+        <h2 style="text-align: center"><span id="title"></span></h2><br/>
+        <h3>栏目：<span id="type"></span></h3><br/>
+        <h3>来源：<span id="source"></span></h3><br/><br/>
+        <h3>时间：<span id="date"></span></h3><br/><br/>
+        <div id="text"></div><br/><br/>
+        <span id="url" style="font-size: 16px">文章原址:</span><span id="city" style="float: right">发布城市:</span>
+    </div>
+
+
+    <div class="layui-footer">
+    </div>
+</div>
+<script>
+$(document).ready(function () {
+    var url=document.location.toString();
+    var id=url.split("=")[1];
+    $.ajax({
+        url:"/article/detail/"+id,
+        type:"get",
+        dataType:"json",
+        success:function (obj) {
+            if(obj.state==1){
+                $("#title").text(obj.data.title);
+                $("#type").text(obj.data.type);
+                $("#source").text(obj.data.source);
+                $("#date").text(obj.data.date);
+                $("#text").html(obj.data.text);
+                $("#url").append("<a href='"+obj.data.url+"'>"+obj.data.url+"</a>");
+                $("#city").append(obj.data.city);
+            }
+        }
+    })
+})
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+</script>
+</body>
+</html>
