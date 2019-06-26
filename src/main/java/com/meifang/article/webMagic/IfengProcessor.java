@@ -55,7 +55,7 @@ public class IfengProcessor implements PageProcessor {
             for (String s : list) {
                 page.addTargetRequest(s);
             }
-        } else if (page.getUrl().regex(".*\\d+-\\d+/$").match()) {
+        } else if (page.getUrl().regex(".*\\d+-\\d+/$").match()||page.getUrl().regex("\\D*//\\D*/\\D*/\\D*/").match()) {
             //添加该页面文章的url到爬取队列
             List<String> list = page.getHtml().xpath("//div[@class='ni_list]/a/@href").all();
             for (String s : list) {

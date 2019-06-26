@@ -2,6 +2,7 @@ package com.meifang.article.webMagic;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
@@ -80,7 +81,7 @@ public class HttpClientDownloader extends AbstractDownloader {
                 this.logger.info("downloading page success {}", request.getUrl());
                 Page var8 = page;
                 return var8;
-            } catch (IOException var13) {
+            } catch(ClientProtocolException e){var9=page;}catch (IOException var13) {
                 this.logger.warn("download page {} error", request.getUrl(), var13);
                 this.onError(request);
                 var9 = page;
